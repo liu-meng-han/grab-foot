@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class GrabFoodApplication {
 
     private AndroidDriver driver;
-    private String DINGDONG_PAY_PASSWD = "123456";
+    private String PAY_PASSWORD = "123456";
 
     public static void main(String[] args) {
         try {
@@ -44,6 +45,11 @@ public class GrabFoodApplication {
     public void run() throws Exception {
         //1. 初始化驱动
         this.initDriver();
+
+        //1.1 初始化配置
+        ResourceBundle application = ResourceBundle.getBundle("grap-food");
+        this.PAY_PASSWORD = application.getString("pay_passwd");
+        System.out.println("PAY_PASSWORD = " + PAY_PASSWORD);
 
         //2. 进主页面&进购物车页面&进入结算页面
         //2.1 进入购物车页面
@@ -70,8 +76,8 @@ public class GrabFoodApplication {
             } catch (NoSuchElementException e) {
                 //1. 利用异常进行判断[这个要改进，不能用异常作为业务判断条件]
                 final char ASCII_ZERO = '0';
-                for (int i = 0; i < DINGDONG_PAY_PASSWD.length(); i++) {
-                    int number = DINGDONG_PAY_PASSWD.charAt(i) - ASCII_ZERO;
+                for (int i = 0; i < PAY_PASSWORD.length(); i++) {
+                    int number = PAY_PASSWORD.charAt(i) - ASCII_ZERO;
                     sleep(TimeUnit.MILLISECONDS, 30);
                     driver.pressKey(new KeyEvent(AndroidKey.valueOf("DIGIT_" + number)));
                 }
