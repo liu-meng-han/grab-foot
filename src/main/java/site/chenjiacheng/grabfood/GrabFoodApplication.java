@@ -5,6 +5,7 @@ import com.sun.tools.example.debug.expr.ASCII_UCodeESC_CharStream;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.touch.offset.PointOption;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class GrabFoodApplication {
 
-    private AndroidDriver driver;
+    private static AndroidDriver driver = null;
     private String PAY_PASSWORD = "123456";
 
     public static void main(String[] args) {
@@ -35,6 +36,10 @@ public class GrabFoodApplication {
         } catch (Exception e) {
             System.out.println("Exception: ->" + e.getMessage());
             e.printStackTrace();
+        } finally {
+            if (driver != null) {
+                driver.quit();
+            }
         }
     }
 
@@ -55,30 +60,71 @@ public class GrabFoodApplication {
         //2.1 进入购物车页面
         driver.findElementById("com.yaya.zone:id/ani_car").click();
         System.out.println("setup 1-> 购物车: done");
-        sleep(TimeUnit.MILLISECONDS, 500);
+        sleep(TimeUnit.MILLISECONDS, 200);
 
-        //2.2 结算
-        driver.findElementById("com.yaya.zone:id/btn_submit").click();
-        System.out.println("setup 2-> 结算: done");
-        sleep(TimeUnit.MILLISECONDS, 500);
+        //2.2 进入结算页面
+        int i = 0;
+        while (true) {
+            try {
+                driver.findElementById("com.yaya.zone:id/btn_submit").click();
+                System.out.println("setup 2-> 结算: done");
+                System.out.println("正在执行结算 = " + (++i));
+                sleep(TimeUnit.MILLISECONDS, 200);
+                //android.widget.TextView
+                List<AndroidElement> elements = driver.findElementsByClassName("android.widget.TextView");
+                boolean flag = false;
+                for (AndroidElement element : elements) {
+                    if(element.getText().equalsIgnoreCase("确认订单")){
+                        flag = true;
+                        break;
+                    }
+                }
+                if(flag){
+                    break;
+                }
+            } catch (NoSuchElementException e) {
+                //2.2 购物车为空，刷新
+                (new TouchAction(driver)).press(PointOption.point(521, 747))
+                        .moveTo(PointOption.point(501, 1639))
+                        .release().perform();
+                //sleep(TimeUnit.SECONDS, 10);
+            }
+        }
+
 
         //2.3 设置预约时间
         //initReservationTime(driver);
 
         //3.循环操作:支付、判断条件
         for (; ; ) {
-            //3.2 立即支付
+            while (true) {
+                try {
+                    driver.findElementById("com.yaya.zone:id/ll_load_root");
+                    driver.findElementById("com.yaya.zone:id/ll_reload_action").click();
+                } catch (NoSuchElementException e) {
+                    break;
+                }
+            }
+
+
             try {
+                //3.2 立即支付
                 WebElement pay_btn = driver.findElementById("com.yaya.zone:id/tv_submit");
                 pay_btn.click();
                 System.out.println("setup 3-> 支付: done");
-                sleep(TimeUnit.MILLISECONDS, 500);
+                sleep(TimeUnit.MILLISECONDS, 200);
             } catch (NoSuchElementException e) {
-                //1. 利用异常进行判断[这个要改进，不能用异常作为业务判断条件]
+                //1. 校验是否到了支付状态
+                try {
+                    driver.findElementById("com.yaya.zone:id/tv_dialog_select_time_title");
+                    initReservationTime(driver);
+                }catch (NoSuchElementException e2){}
+
+                //2. 支付[这个要改进，不能用异常作为业务判断条件]
                 final char ASCII_ZERO = '0';
-                for (int i = 0; i < PAY_PASSWORD.length(); i++) {
-                    int number = PAY_PASSWORD.charAt(i) - ASCII_ZERO;
-                    sleep(TimeUnit.MILLISECONDS, 30);
+                for (int index = 0; index < PAY_PASSWORD.length(); index++) {
+                    int number = PAY_PASSWORD.charAt(index) - ASCII_ZERO;
+                    sleep(TimeUnit.MILLISECONDS, 20);
                     driver.pressKey(new KeyEvent(AndroidKey.valueOf("DIGIT_" + number)));
                 }
                 System.out.println("任务圆满结束！！！");
@@ -106,7 +152,7 @@ public class GrabFoodApplication {
         desiredCapabilities.setCapability("appPackage", "com.yaya.zone");
         desiredCapabilities.setCapability("appActivity", "cn.me.android.splash.activity.SplashActivity");
         driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), desiredCapabilities);
-        sleep(TimeUnit.SECONDS, 5);
+        sleep(TimeUnit.SECONDS, 4);
     }
 
     @SuppressWarnings("ALL")
@@ -147,7 +193,6 @@ public class GrabFoodApplication {
             e.printStackTrace();
         }
     }
-
 
 
 }
