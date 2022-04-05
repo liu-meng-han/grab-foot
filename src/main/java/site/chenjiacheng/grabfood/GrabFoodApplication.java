@@ -57,10 +57,15 @@ public class GrabFoodApplication {
         System.out.println("PAY_PASSWORD = " + PAY_PASSWORD);
 
         //2. 进主页面&进购物车页面&进入结算页面
+        //2.0 跳过开屏广告 com.yaya.zone:id/tv_skip
+        sleep(TimeUnit.MILLISECONDS, 200);
+        driver.findElementById("com.yaya.zone:id/tv_skip").click();
+
+
         //2.1 进入购物车页面
+        sleep(TimeUnit.MILLISECONDS, 1000);
         driver.findElementById("com.yaya.zone:id/ani_car").click();
         System.out.println("setup 1-> 购物车: done");
-        sleep(TimeUnit.MILLISECONDS, 200);
 
         //2.2 进入结算页面
         int i = 0;
@@ -152,7 +157,6 @@ public class GrabFoodApplication {
         desiredCapabilities.setCapability("appPackage", "com.yaya.zone");
         desiredCapabilities.setCapability("appActivity", "cn.me.android.splash.activity.SplashActivity");
         driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), desiredCapabilities);
-        sleep(TimeUnit.SECONDS, 4);
     }
 
     @SuppressWarnings("ALL")
