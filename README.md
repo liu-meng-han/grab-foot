@@ -46,12 +46,12 @@ export CLASS_PATH=$JAVA_HOME/lib
 ```
 
 ### 3.Appium 下载
-3.1 appium-desktop 下载
+appium下载（选择好自己的系统直接下载安装运行，没什么特殊的）
 > https://github.com/appium/appium-desktop/releases/tag/v1.22.2
 
 
 ### 4.真机运行
-1. 手机端操作
+1. 手机端操作 [数据线连接到电脑，手机打开开发模式]
 ```text
 Setup 1: 打开开发者模式
 SetUp 2: 通过USB连接到电脑
@@ -59,8 +59,11 @@ SetUp 2: 通过USB连接到电脑
 
 2. 电脑端操作
 ```.shell
+# 1. 检测设备是否连接到电脑上了
 $ adb devices
+# 2. 开启TCP端口，可用于adb连接
 $ adb tcpip 5555
+# 3. 连接设备
 $ adb connect ${手机ip}:5555
 ```
 
@@ -68,8 +71,8 @@ $ adb connect ${手机ip}:5555
 ```text
 Setup 1: 打开软件
 Setup 2: Host = 127.0.0.1
-Setup 3: Edit Configuration 配置: 输入各环境的值即可。
-Setup 4: 运行
+Setup 3: Edit Configuration 配置: 输入各环境的值即可（JAVA_HOME、ANDROID_HOME）。
+Setup 4: 运行-> StartServer
 ```
 
 4. 代码运行
