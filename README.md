@@ -6,6 +6,9 @@
 
 我觉得实现方式上出了些问题，这种方式太繁琐了，准备基于安卓无障碍实现。
 
+基于: https://appium.io/
+Appium教程: https://www.bilibili.com/video/BV1B441197rZ?p=1
+
 ## 运行要求
 1. AndroidSDK
 2. JDK 8
