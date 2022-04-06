@@ -9,6 +9,10 @@
 基于: https://appium.io/
 Appium教程: https://www.bilibili.com/video/BV1B441197rZ?p=1
 
+** 本项目大概也许没有多少使用价值（可能对安卓自动化测试有一点学习价值），根本抢不到，我已经通过美团跑腿买到了菜。[超市其实是有菜的] **
+
+
+
 ## 运行要求
 1. AndroidSDK
 2. JDK 8
